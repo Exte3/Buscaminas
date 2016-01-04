@@ -5,7 +5,7 @@
 	seleccion: .asciiz "1)Para usar un tablero predefinido 2)Para uno aleatorio : \n"
 	plis: .asciiz "Por favor ingrese una opcion valida \n"
 	newline:  .asciiz "\n"
-	ale: .asciiz "Ingrese el tamaño de buscamina que desea, no mayor a 16 \n"
+	ale: .asciiz "Ingrese el tamaño de buscamina que desea, no mayor a 16 : \n"
 	outrange: .asciiz "El numero ingresado esta fuera de rango, intentelo nuevamente \n"
 	
 #Globales
@@ -58,11 +58,15 @@ inicio:
 		syscall
 		move $a0, $v0
 		bgt $a0, 16, fuera
-		blt $a0, 1, fuera
+		blt $a0, 3, fuera
 		#jal lengtharray
 		move $a0, $v0
 		mul $a0, $a0, $a0
+		move $a1, $a0
+		add $a0, $zero, $zero
 		add $t0, $zero, $zero
+		lw $t1, -4($a0)
+		addi $t1, $t1, 4
 		jal crear
 		
 		j end
@@ -84,16 +88,19 @@ inicio:
 		crear:
 			# -4(pos) corresponde al primer dato del arreglo.
 			# La cabezera debe estar vacia
-			bge $t0, $a0, end
+			bge $t0, $t1, return
+			#cargar dato en $t1 y luego moverse
 			subi $t1, $t1, 4
 			lw $t3, -4($t1)
-			add $t3, $zero, $t0
 			# Guarda un dato en la posicion correspondiete
+			
 			sw $t3, -4($t1)
 			# i++
 			addi $t0, $t0, 1
 			j crear
 		
+		return:
+			jr $ra
 		rellenar:
 			
 		#la idea es usar el modulo de 3 para el numero que sale, si es 0 se pone mina
@@ -102,6 +109,7 @@ inicio:
 			li $a1, 100
 			li $v0, 42
 			syscall
+			#Si el numero que retorna es igual o menor a 15 sera una mina
 			
 
 end:
