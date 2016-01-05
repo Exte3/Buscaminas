@@ -31,7 +31,7 @@ inicio:
 		syscall
 		j inicio
 
-	#predefinido es el que lee de un archivo
+	#predefinido es el que lee de un archivo, aun sin funcionar
 	predefinido:
 		la $a0, archivo
 		li $a1, 0
@@ -90,7 +90,9 @@ inicio:
 		
 		crear:
 			# -4(pos) corresponde al primer dato del arreglo.
-			# La cabezera debe estar vacia
+			# Los datos se guardan en el sp, actualmente se puede notar que las bombas
+			# quedan introducidas aleatoriamente en el tablero, pero aun no se puede jugar
+			# ni mistrar el tablero
 			bge $t0, $a1, return
 			move $t7, $ra
 			move $t8, $a1
@@ -111,9 +113,9 @@ inicio:
 		
 		return:
 			jr $ra
-		rellenar:
+		
 			
-		#la idea es usar el modulo de 3 para el numero que sale, si es 0 se pone mina
+		
 		random:
 			li $a0, 1
 			li $a1, 100
@@ -132,11 +134,11 @@ inicio:
 			add $t5, $zero, $zero
 			j seguir
 		nada:	
-			#move $t5, $t0
-			#li $t5, 0	
+			move $t5, $t0
+			li $t0, 0	
 			sw $t0, -4($t1)
 			lw $t0, -4($t1)
-			#move $t0, $t5
+			move $t0, $t5
 			j seguir
 	imprimir:
 
